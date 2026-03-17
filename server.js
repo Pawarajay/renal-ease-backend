@@ -29,8 +29,8 @@ const FRONTEND_URL = (
 
 const allowedOrigins = [
   FRONTEND_URL,
-  "http://localhost:3000",
-  "http://localhost:8080",
+  // "http://localhost:3000",
+  // "http://localhost:8080",
   "https://renal-ease-frontend.vercel.app",
   "https://renal-ease-webiste.vercel.app"
 ];
