@@ -22,10 +22,10 @@ const { sendText, sendTemplate } = require("./services/whatsapp");
 const app  = express();
 const PORT = process.env.PORT || 5000;
 
-const FRONTEND_URL = (
-  // process.env.FRONTEND_URL || "https://crm.renalease.com"
-  process.env.FRONTEND_URL 
-).replace(/\/$/, "");
+// const FRONTEND_URL = (
+//   // process.env.FRONTEND_URL || "https://crm.renalease.com"
+//   process.env.FRONTEND_URL 
+// ).replace(/\/$/, "");
 
 const allowedOrigins = [
   // FRONTEND_URL,
@@ -159,7 +159,7 @@ const startServer = async () => {
       console.log("================================================");
       console.log(`📦 Environment : ${process.env.NODE_ENV || "development"}`);
       console.log(`🌐 Server URL  : http://localhost:${PORT}`);
-      console.log(`🖥️  Frontend    : ${FRONTEND_URL}`);
+      // console.log(`🖥️  Frontend    : ${FRONTEND_URL}`);
       console.log(`✅ Origins     :`, allowedOrigins);
       console.log("================================================\n");
     });
