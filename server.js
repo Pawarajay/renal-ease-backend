@@ -28,7 +28,8 @@ const FRONTEND_URL = (
 
 const allowedOrigins = [
   FRONTEND_URL,
-  "http://localhost:3000"
+  "http://localhost:3000",
+  "https://renal-ease-frontend.vercel.app"
 ];
 
 // ── CORS ──────────────────────────────────────────────────────────────────────

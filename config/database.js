@@ -13,15 +13,17 @@ require("dotenv").config()
 //   queueLimit: 0,
 // }
 const dbConfig = {
-  host: process.env.DB_HOST || "localhost",
+  host: process.env.DB_HOST || "metro.proxy.rlwy.net",
   user: process.env.DB_USER || "root",
-  password: process.env.DB_PASSWORD || "Ajay@7039",
-  database: process.env.DB_NAME || "renalease_crm",
-  port: process.env.DB_PORT || 3306,
+  password: process.env.DB_PASSWORD || "vLOoYtJuOWtqInOcEbXZpXGMbyPrXKZm",
+  database: process.env.DB_NAME || "renalease_crm_test",
+  port: process.env.DB_PORT || 56069,
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,
 }
+
+// root:vLOoYtJuOWtqInOcEbXZpXGMbyPrXKZm@metro.proxy.rlwy.net:56069/railway
 const pool = mysql.createPool(dbConfig)
 
 async function testConnection() {
