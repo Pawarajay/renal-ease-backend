@@ -4,7 +4,7 @@ require("dotenv").config();
 
 const { testConnection }      = require("./config/database");
 const { initializeScheduler } = require("./services/scheduler");
-
+// const { sendText, sendTemplate } = require("./services/whatsapp");
 // ── Core routes ───────────────────────────────────────────────────────────────
 const authRoutes           = require("./routes/auth");
 const usersRouter          = require("./routes/users");
@@ -16,6 +16,7 @@ const whatsappRoutes       = require("./routes/whatsapp");
 const whatsappWebhookRouter= require("./routes/whatsapp-webhook");
 const reportRoutes         = require("./routes/reports");
 const publicLeadsRouter    = require("./routes/public-leads");
+const { sendText, sendTemplate } = require("./services/whatsapp");
 
 // ── App setup ─────────────────────────────────────────────────────────────────
 const app  = express();
@@ -29,7 +30,9 @@ const FRONTEND_URL = (
 const allowedOrigins = [
   FRONTEND_URL,
   "http://localhost:3000",
-  "https://renal-ease-frontend.vercel.app"
+  "http://localhost:8080",
+  "https://renal-ease-frontend.vercel.app",
+  "https://renal-ease-webiste.vercel.app"
 ];
 
 // ── CORS ──────────────────────────────────────────────────────────────────────

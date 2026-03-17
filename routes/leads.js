@@ -1088,4 +1088,128 @@ router.delete("/:id", authenticateToken, async (req, res) => {
   }
 });
 
+// // ─── PUBLIC WEBSITE BOOKING ENDPOINT ────────────────────────────────────────────
+// // No auth — called from website
+// router.post(
+//   "/public/website-booking",
+//   [
+//     body("name").trim().notEmpty().withMessage("Name is required"),
+//     body("phone").notEmpty().withMessage("Phone is required"),
+//     body("service").optional().isString(),
+//     body("notes").optional().isString(),
+//     body("source").optional().equals("website"),
+//   ],
+//   async (req, res) => {
+//     try {
+//       if (handleValidation(req, res)) return;
+
+//       const { name, phone, service, notes } = req.body;
+
+//       // Clean phone → remove + , spaces, etc.
+//       const cleanPhone = phone.replace(/\D/g, "");
+//       if (cleanPhone.length < 10) {
+//         return res.status(400).json({ error: "Invalid phone number" });
+//       }
+
+//       // Synthetic email
+//       const syntheticEmail = `${cleanPhone}@website-booking.renalease.local`;
+
+//       // Duplicate check (last 24h)
+//       const [recent] = await pool.execute(
+//         `SELECT id FROM leads 
+//          WHERE phone = ? AND source = 'website'
+//          AND created_at >= DATE_SUB(NOW(), INTERVAL 24 HOUR)`,
+//         [cleanPhone]
+//       );
+
+//       if (recent.length > 0) {
+//         return res.status(409).json({
+//           error: "Duplicate submission",
+//           message: "We already received a request from this number recently.",
+//         });
+//       }
+
+//       const leadId = uuidv4();
+
+//       await pool.execute(
+//         `
+//         INSERT INTO leads (
+//           id, name, email, phone, source, status, priority,
+//           service, notes, whatsapp_number,
+//           created_at, updated_at
+//         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+//         `,
+//         [
+//           leadId,
+//           name.trim(),
+//           syntheticEmail,
+//           cleanPhone,
+//           "website",           // ← as requested
+//           "new",
+//           "high",
+//           service || null,
+//           notes || null,
+//           cleanPhone,           // whatsapp_number = phone
+//         ]
+//       );
+
+//       // ─── Send WhatsApp Template Message ───────────────────────────────────────
+//       try {
+//         const axios = require("axios");
+
+//         const waPayload = {
+//           messaging_product: "whatsapp",
+//           recipient_type: "individual",
+//           to: cleanPhone,
+//           type: "template",
+//           template: {
+//             name: process.env.WHATSAPP_TEMPLATE_NAME || "booking_received_confirmation",
+//             language: {
+//               code: process.env.WHATSAPP_TEMPLATE_LANGUAGE_CODE || "en",
+//             },
+//             // If your template has NO parameters → remove "components" completely
+//             // If it has 1 text parameter (e.g. customer name), uncomment:
+//             /*
+//             components: [
+//               {
+//                 type: "body",
+//                 parameters: [
+//                   {
+//                     type: "text",
+//                     text: name.trim().split(" ")[0] || "customer", // e.g. first name
+//                   },
+//                 ],
+//               },
+//             ],
+//             */
+//           },
+//         };
+
+//         const waResponse = await axios.post(
+//           `https://graph.facebook.com/${process.env.WHATSAPP_VERSION || "v20.0"}/${process.env.WHATSAPP_PHONE_NUMBER_ID}/messages`,
+//           waPayload,
+//           {
+//             headers: {
+//               Authorization: `Bearer ${process.env.WHATSAPP_TOKEN}`,
+//               "Content-Type": "application/json",
+//             },
+//           }
+//         );
+
+//         console.log("WhatsApp template sent →", waResponse.data);
+//       } catch (whatsappErr) {
+//         console.error("WhatsApp send failed (non-blocking):", whatsappErr.response?.data || whatsappErr.message);
+//         // Still return success to user — WhatsApp failure should not block form submission
+//       }
+
+//       res.status(201).json({
+//         message: "Booking received successfully. Our team will contact you shortly.",
+//         leadId,
+//       });
+//     } catch (error) {
+//       console.error("Website booking error:", error);
+//       res.status(500).json({ error: "Failed to process booking" });
+//     }
+//   }
+// );
 module.exports = router;
