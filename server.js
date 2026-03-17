@@ -22,15 +22,14 @@ const { sendText, sendTemplate } = require("./services/whatsapp");
 const app  = express();
 const PORT = process.env.PORT || 5000;
 
-// const FRONTEND_URL = (
-//   // process.env.FRONTEND_URL || "https://crm.renalease.com"
-//   process.env.FRONTEND_URL 
-// ).replace(/\/$/, "");
+const FRONTEND_URL = (
+  process.env.FRONTEND_URL || "https://renal-ease-webiste.vercel.app"
+).replace(/\/$/, "");
 
 const allowedOrigins = [
-  // FRONTEND_URL,
-  // "http://localhost:3000",
-  // "http://localhost:8080",
+  FRONTEND_URL,
+  "http://localhost:3000",
+  "http://localhost:8080",
   "https://renal-ease-frontend.vercel.app",
   "https://renal-ease-webiste.vercel.app"
 ];
