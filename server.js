@@ -35,13 +35,45 @@ const allowedOrigins = [
 ];
 
 // ── CORS ──────────────────────────────────────────────────────────────────────
+// app.use(
+//   cors({
+//     origin(origin, callback) {
+//       // Allow server-to-server / Postman requests (no origin header)
+//       if (!origin) return callback(null, true);
+//       if (allowedOrigins.includes(origin)) return callback(null, true);
+//       console.warn(`⚠️  CORS blocked: ${origin}`);
+//       callback(new Error("Not allowed by CORS"));
+//     },
+//     credentials: true,
+//     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+//     allowedHeaders: ["Content-Type", "Authorization"],
+//   })
+// );
+
+
+// ── CORS ──────────────────────────────────────────────────────────────────────
+
+// Automatically allow all Vercel preview/deploy domains
+const isVercelDomain = (origin) => origin && origin.endsWith(".vercel.app");
+
 app.use(
   cors({
-    origin(origin, callback) {
-      // Allow server-to-server / Postman requests (no origin header)
+    origin: (origin, callback) => {
+      // Allow requests with no origin (Postman, curl, server-to-server)
       if (!origin) return callback(null, true);
-      if (allowedOrigins.includes(origin)) return callback(null, true);
-      console.warn(`⚠️  CORS blocked: ${origin}`);
+
+      // Allow explicit list
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+
+      // Allow any Vercel subdomain (preview branches, etc.)
+      if (isVercelDomain(origin)) {
+        console.log(`[CORS] Allowing Vercel preview domain: ${origin}`);
+        return callback(null, true);
+      }
+
+      console.warn(`[CORS] Blocked origin: ${origin}`);
       callback(new Error("Not allowed by CORS"));
     },
     credentials: true,
@@ -49,6 +81,9 @@ app.use(
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
+
+// Handle preflight OPTIONS requests for all routes
+app.options("*", cors());
 app.options("*", cors());
 
 // ── Body parsing ──────────────────────────────────────────────────────────────
